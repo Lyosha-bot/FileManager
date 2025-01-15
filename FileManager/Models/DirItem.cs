@@ -10,213 +10,220 @@ using File = System.IO.File;
 
 
 
-namespace FileManager
+namespace FileManager;
+
+public class DirItem
 {
-    public class DirItem
+    public string Name { get; }
+    public string DisplayName { get; }
+    public string Type { get; }
+
+    public string Dir { get; }
+
+    public Button ItemButton { get; }
+
+    public DirItem(string dir)
     {
-        public string Name { get; }
-        public string DisplayName { get; }
-        public string Type { get; }
+        Name = Path.GetFileName(dir);
+        Type = GetType(dir);
+        DisplayName = (Type == "drive" ? $"Диск {dir[0].ToString()}" : Name);
 
-        public string Dir { get; }
+        Dir = dir;
 
-        public Button ItemButton { get; }
-
-        public DirItem(string dir)
+        ItemButton = new Button()
         {
-            Name = Path.GetFileName(dir);
-            Type = GetType(dir);
-            DisplayName = (Type == "drive" ? $"Диск {dir[0].ToString()}" : Name);
+            Tag = dir,
+            Style = UI.Styles.Button(),
+            ToolTip = DisplayName
+        };
 
-            Dir = dir;
+        Grid grid = new Grid() 
+        { 
+            Style = UI.Styles.Wrapper(),
+        };
 
-            ItemButton = new Button();
-            ItemButton.Tag = dir;
-            ItemButton.Style = UI.Styles.Button();
-            ItemButton.ToolTip = DisplayName;
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(8, GridUnitType.Star) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Star) });
 
-            Grid grid = new Grid();
-            grid.Style = UI.Styles.Wrapper();
+        Image img = new Image()
+        {
+            Style = UI.Styles.Image(),
+            Stretch = Stretch.Uniform,
+            Source = new BitmapImage(GetIcon(dir)),
+            IsHitTestVisible = false
+        };
 
-            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(8, GridUnitType.Star) });
-            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Star) });
+        Grid.SetRow(img, 0);
+        grid.Children.Add(img);
 
-            Image img = new Image();
-            img.Style = UI.Styles.Image();
-            img.Stretch = Stretch.Uniform;
-            img.Source = new BitmapImage(GetIcon(dir));
-            img.IsHitTestVisible = false;
+        TextBlock textBlock = new TextBlock() 
+        { 
+            Style = UI.Styles.Name(),
+            TextWrapping = TextWrapping.NoWrap,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+            Text = DisplayName,
+            IsHitTestVisible = false
+        };
 
-            Grid.SetRow(img, 0);
-            grid.Children.Add(img);
+        Grid.SetRow(textBlock, 1);
+        grid.Children.Add(textBlock);
 
-            TextBlock textBlock = new TextBlock();
-            textBlock.Style = UI.Styles.Name();
-            textBlock.TextWrapping = TextWrapping.NoWrap;
-            textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
-            textBlock.Text = DisplayName;
-            textBlock.IsHitTestVisible = false;
+        ItemButton.Content = grid;
+    }
 
-            Grid.SetRow(textBlock, 1);
-            grid.Children.Add(textBlock);
+    public bool Exists()
+    {
+        return Directory.Exists(Dir) || File.Exists(Dir);
+    }
 
-            ItemButton.Content = grid;
+    public bool CanAccess()
+    {
+        try
+        {
+            if (Type == "folder" || Type == "drive")
+                Directory.GetFiles(Dir);
+            else
+            {
+                FileStream file = File.OpenRead(Dir);
+                file.Close();
+            }
+            return true;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            MessageBox.Show("Нет доступа к данной директории.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        catch (DirectoryNotFoundException)
+        {
+            MessageBox.Show("Данной директории не существует.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка доступа директории: {ex.ToString()}.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        public bool Exists()
+        return false;
+    }
+
+    public void Open()
+    {
+        if (Type == "folder" || Type == "shortcut")
+            return;
+
+        try
         {
-            return Directory.Exists(Dir) || File.Exists(Dir);
-        }
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = Dir,
+                Verb = "open",
+                UseShellExecute = true
+            };
 
-        public bool CanAccess()
+            Process.Start(startInfo);
+        }
+        catch (FileNotFoundException)
         {
-            try
-            {
-                if (Type == "folder" || Type == "drive")
-                    Directory.GetFiles(Dir);
-                else
-                {
-                    FileStream file = File.OpenRead(Dir);
-                    file.Close();
-                }
-                return true;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                MessageBox.Show("Нет доступа к данной директории.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (DirectoryNotFoundException)
-            {
-                MessageBox.Show("Данной директории не существует.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка доступа директории: {ex.ToString()}.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            return false;
+            MessageBox.Show("Данного файла не существует.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-
-        public void Open()
+        catch (Exception ex)
         {
-            if (Type == "folder" || Type == "shortcut")
-                return;
-
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    FileName = Dir,
-                    Verb = "open",
-                    UseShellExecute = true
-                };
-
-                Process.Start(startInfo);
-            }
-            catch (FileNotFoundException)
-            {
-                MessageBox.Show("Данного файла не существует.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка открытия файла {Dir}: {ex.Message}");
-            }
+            MessageBox.Show($"Ошибка открытия файла {Dir}: {ex.Message}");
         }
+    }
 
-        // Static
+    // Static
 
-        static public bool CanAccess(string dir)
+    static public bool CanAccess(string dir)
+    {
+        try
         {
-            try
+            if (GetType(dir) == "folder" || GetType(dir) == "drive")
+                Directory.GetFiles(dir);
+            else
             {
-                if (GetType(dir) == "folder" || GetType(dir) == "drive")
-                    Directory.GetFiles(dir);
-                else
-                {
-                    FileStream file = File.OpenRead(dir);
-                    file.Close();
-                }
-                return true;
+                FileStream file = File.OpenRead(dir);
+                file.Close();
             }
-            catch (UnauthorizedAccessException)
-            {
-                MessageBox.Show($"Нет доступа к данной директории.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (DirectoryNotFoundException)
-            {
-                MessageBox.Show("Данной директории не существует.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка доступа директории: {ex.ToString()}.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            return false;
+            return true;
         }
-
-        static public string GetType(string dir)
+        catch (UnauthorizedAccessException)
         {
-            if (dir == "")
-                return "system";
-
-            string[] split = dir.Split('\\');
-            if (split[1] == "")
-                return "drive";
-
-            FileAttributes attr = File.GetAttributes(dir);
-
-            if (attr.HasFlag(FileAttributes.Directory))
-                return "folder";
-
-            switch (Path.GetExtension(dir).ToUpperInvariant())
-            {
-                case ".PNG":
-                case ".JPG":
-                case ".JPEG":
-                    return "image";
-
-                //case ".LNK":
-                //    return "shortcut";
-
-                default:
-                    return "unknown";
-            }
+            MessageBox.Show($"Нет доступа к данной директории.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-
-        static public string? GetParent(string dir)
+        catch (DirectoryNotFoundException)
         {
-            if (dir == "")
-                return null;
-
-            if (GetType(dir) == "drive")
-                return "";
-
-            DirectoryInfo? parent = Directory.GetParent(dir);
-            if (parent == null)
-                return null;
-
-            return parent.FullName;
+            MessageBox.Show("Данной директории не существует.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-
-        static public Uri GetIcon(string dir)
+        catch (Exception ex)
         {
-            string type = GetType(dir);
-
-            if (type == "image")
-                return new Uri(dir, UriKind.Absolute);
-
-            return new Uri(@$"Assets\{type}.png", UriKind.Relative);
+            MessageBox.Show($"Ошибка доступа директории: {ex.ToString()}.", "Ошибка доступа", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        return false;
+    }
 
-        static public string? GetDir(Button? item)
+    static public string GetType(string dir)
+    {
+        if (dir == "")
+            return "system";
+
+        string[] split = dir.Split('\\');
+        if (split[1] == "")
+            return "drive";
+
+        FileAttributes attr = File.GetAttributes(dir);
+
+        if (attr.HasFlag(FileAttributes.Directory))
+            return "folder";
+
+        switch (Path.GetExtension(dir).ToUpperInvariant())
         {
-            if (item == null)
-                return null;
+            case ".PNG":
+            case ".JPG":
+            case ".JPEG":
+                return "image";
 
-            var tag = item.Tag;
-            if (tag == null)
-                return null;
+            //case ".LNK":
+            //    return "shortcut";
 
-            return tag.ToString();
+            default:
+                return "unknown";
         }
+    }
+
+    static public string? GetParent(string dir)
+    {
+        if (dir == "")
+            return null;
+
+        if (GetType(dir) == "drive")
+            return "";
+
+        DirectoryInfo? parent = Directory.GetParent(dir);
+        if (parent == null)
+            return null;
+
+        return parent.FullName;
+    }
+
+    static public Uri GetIcon(string dir)
+    {
+        string type = GetType(dir);
+
+        if (type == "image")
+            return new Uri(dir, UriKind.Absolute);
+
+        return new Uri(@$"Assets\{type}.png", UriKind.Relative);
+    }
+
+    static public string? GetDir(Button? item)
+    {
+        if (item == null)
+            return null;
+
+        var tag = item.Tag;
+        if (tag == null)
+            return null;
+
+        return tag.ToString();
     }
 }
