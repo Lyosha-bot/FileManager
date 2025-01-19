@@ -5,10 +5,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Diagnostics;
 
-using IWshRuntimeLibrary;
 using File = System.IO.File;
-
-
 
 namespace FileManager;
 
