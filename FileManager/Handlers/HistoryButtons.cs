@@ -6,7 +6,7 @@ namespace FileManager;
 
 public partial class MainWindow
 {
-    public void RevertAction(object sender, RoutedEventArgs e)
+    private void RevertAction(object sender, RoutedEventArgs e)
     {
         if (ModalMode)
             return;
@@ -18,7 +18,7 @@ public partial class MainWindow
         LoadFiles(null);
     }
 
-    public void ForwardAction(object sender, RoutedEventArgs e)
+    private void ForwardAction(object sender, RoutedEventArgs e)
     {
         if (ModalMode)
             return;
@@ -29,7 +29,7 @@ public partial class MainWindow
         LoadFiles(DirNextHistory.Pop());
     }
 
-    public void ParentAction(object sender, RoutedEventArgs e)
+    private void ParentAction(object sender, RoutedEventArgs e)
     {
         if (ModalMode)
             return;

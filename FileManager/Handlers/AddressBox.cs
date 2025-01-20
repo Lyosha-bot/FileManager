@@ -9,7 +9,7 @@ namespace FileManager;
 
 public partial class MainWindow
 {
-    public void AddressBoxCopy(object sender, RoutedEventArgs e)
+    private void AddressBoxCopy(object sender, RoutedEventArgs e)
     {
         TextBox? textBox = sender as TextBox;
         if (textBox == null)
@@ -20,7 +20,7 @@ public partial class MainWindow
         e.Handled = true;
     }
 
-    public void AddressBoxEnter(object sender, KeyEventArgs e)
+    private void AddressBoxEnter(object sender, KeyEventArgs e)
     {
         if (ModalMode)
             return;

@@ -22,7 +22,7 @@ public partial class MainWindow
 
     FileSystemWatcher? watcher;
 
-    public void HideRenameBox()
+    private void HideRenameBox()
     {
         if (RenameItem == null)
             return;
@@ -34,7 +34,7 @@ public partial class MainWindow
         RenameItem = null;
     }
 
-    public DirItem? GetItem(Button? button)
+    private DirItem? GetItem(Button? button)
     {
         string? dir = DirItem.GetDir(button);
         if (dir == null)
@@ -43,7 +43,7 @@ public partial class MainWindow
         return CurrentItems[dir];
     }
 
-    public void LoadFiles(string? dir)
+    private void LoadFiles(string? dir)
     {
         string currentDir = (dir == null ? DirHistory.Peek() : dir);
 
@@ -115,12 +115,12 @@ public partial class MainWindow
         ParentButton.IsEnabled = (DirItem.GetParent(currentDir) != null);
     }
 
-    public void DirChanged(object sender, FileSystemEventArgs e)
+    private void DirChanged(object sender, FileSystemEventArgs e)
     {
         Dispatcher.Invoke(() => LoadFiles(null));
     }
 
-    public void OpenDir(string dir)
+    private void OpenDir(string dir)
     {
         DirItem item = CurrentItems[dir];
 
@@ -136,20 +136,20 @@ public partial class MainWindow
             item.Open();
     }
 
-    public void UnselectItems()
+    private void UnselectItems()
     {
         foreach (DirItem button in SelectItems)
             button.ItemButton.BorderBrush = Brushes.Transparent;
         SelectItems.Clear();
     }
 
-    public void UnselectItem(DirItem item)
+    private void UnselectItem(DirItem item)
     {
         SelectItems.Remove(item);
         item.ItemButton.BorderBrush = Brushes.Transparent;
     }
 
-    public void SelectItem(DirItem newItem, bool newList, bool removeOnExist)
+    private void SelectItem(DirItem newItem, bool newList, bool removeOnExist)
     {
         if (newList)
             UnselectItems();

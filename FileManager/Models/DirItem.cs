@@ -104,7 +104,7 @@ public class DirItem
 
     public void Open()
     {
-        if (Type == "folder" || Type == "shortcut")
+        if (Type == "folder")
             return;
 
         try

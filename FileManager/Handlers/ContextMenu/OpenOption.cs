@@ -6,7 +6,7 @@ namespace FileManager;
 
 public partial class MainWindow
 {
-    public void SelectOpenOption(object sender, RoutedEventArgs e)
+    private void SelectOpenOption(object sender, RoutedEventArgs e)
     {
         if (SelectItems.Count != 1)
             return;

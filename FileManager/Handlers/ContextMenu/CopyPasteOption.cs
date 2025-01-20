@@ -9,7 +9,7 @@ public partial class MainWindow
 {
     // Copy Option
 
-    public void SelectCopyOption(object sender, RoutedEventArgs e)
+    private void SelectCopyOption(object sender, RoutedEventArgs e)
     {
         if (SelectItems.Count <= 0)
             return;
@@ -19,7 +19,7 @@ public partial class MainWindow
 
     // Paste Option
 
-    public void RecursivePaste(string source_dir, string end_dir)
+    private void RecursivePaste(string source_dir, string end_dir)
     {
         if (!Directory.Exists(source_dir))
             return;
@@ -43,7 +43,7 @@ public partial class MainWindow
         }
     }
 
-    public void SelectPasteOption(object sender, RoutedEventArgs e)
+    private void SelectPasteOption(object sender, RoutedEventArgs e)
     {
         if (CopyItems.Count < 1)
             return;

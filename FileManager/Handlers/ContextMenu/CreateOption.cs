@@ -8,7 +8,7 @@ public partial class MainWindow
 {
     // Create Folder Option
 
-    public void SelectCreateFolderOption(object sender, RoutedEventArgs e)
+    private void SelectCreateFolderOption(object sender, RoutedEventArgs e)
     {
         if (SelectItems.Count > 0)
             return;
@@ -33,7 +33,7 @@ public partial class MainWindow
 
     // Create File Option
 
-    public void SelectCreateFileOption(object sender, RoutedEventArgs e)
+    private void SelectCreateFileOption(object sender, RoutedEventArgs e)
     {
         if (SelectItems.Count > 0)
             return;

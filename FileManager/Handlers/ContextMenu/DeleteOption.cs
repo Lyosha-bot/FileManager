@@ -7,7 +7,7 @@ namespace FileManager;
 
 public partial class MainWindow
 {
-    public void SelectDeleteOption(object sender, RoutedEventArgs e)
+    private void SelectDeleteOption(object sender, RoutedEventArgs e)
     {
         if (SelectItems.Count < 1)
             return;

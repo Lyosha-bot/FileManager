@@ -8,7 +8,7 @@ namespace FileManager;
 
 public partial class MainWindow
 {
-    public void SelectRenameOption(object sender, RoutedEventArgs e)
+    private void SelectRenameOption(object sender, RoutedEventArgs e)
     {
         if (SelectItems.Count != 1)
             return;

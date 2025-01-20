@@ -6,7 +6,7 @@ namespace FileManager;
 // Move Option
 public partial class MainWindow
 {
-    public void SelectMoveOption(object sender, RoutedEventArgs e)
+    private void SelectMoveOption(object sender, RoutedEventArgs e)
     {
         if (SelectItems.Count <= 0)
             return;

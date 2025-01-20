@@ -10,7 +10,7 @@ namespace FileManager;
 
 public partial class MainWindow
 {
-    public void LeftMouseDown(object sender, MouseButtonEventArgs e)
+    private void LeftMouseDown(object sender, MouseButtonEventArgs e)
     {
         if (ModalMode)
             return;
@@ -29,7 +29,7 @@ public partial class MainWindow
             SelectItem(target, !holdsCtrl, holdsCtrl && SelectItems.Contains(target));
     }
 
-    public void RenameDir(object sender, KeyEventArgs e)
+    private void RenameDir(object sender, KeyEventArgs e)
     {
         if (e.Key != Key.Enter)
             return;
@@ -51,7 +51,7 @@ public partial class MainWindow
         HideRenameBox();
     }
 
-    public void OpenItem(object sender, MouseButtonEventArgs e)
+    private void OpenItem(object sender, MouseButtonEventArgs e)
     {
         if (ModalMode)
             return;

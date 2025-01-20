@@ -8,7 +8,7 @@ namespace FileManager;
 
 public partial class MainWindow
 {
-    public void ContextMenuOpened(object sender, RoutedEventArgs e)
+    private void ContextMenuOpened(object sender, RoutedEventArgs e)
     {
         UIElement? target = e.Source as UIElement;
         if (target == null)
